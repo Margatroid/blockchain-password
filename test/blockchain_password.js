@@ -49,4 +49,28 @@ contract('BlockchainPassword', function(accounts) {
       done();
     });
   });
+
+  it('should override an existing login', function(done) {
+    BlockchainPassword.deployed().then(function(instance) {
+      blockchainPassword = instance;
+      return blockchainPassword.getLogin.call(1);
+    }).then(function(result) {
+      assert.equal(result[0], 'login2');
+      assert.equal(result[1], 'username');
+      assert.equal(result[2], 'pass');
+    }).then(function() {
+      return blockchainPassword.setLogin.sendTransaction(1, 'newlogin', 'newuser', 'newpass');
+    }).then(function() {
+      return blockchainPassword.getLogin.call(1);
+    }).then(function(result) {
+      assert.equal(result[0], 'newlogin');
+      assert.equal(result[1], 'newuser');
+      assert.equal(result[2], 'newpass');
+    }).then(function() {
+      return blockchainPassword.getLogins.call();
+    }).then(function(result) {
+      assert.equal(result, 'login,newlogin,login3');
+      done();
+    });
+  });
 });

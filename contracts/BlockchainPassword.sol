@@ -26,6 +26,24 @@ contract BlockchainPassword {
     return true;
   }
 
+  function setLogin(uint index, string name, string username, string password) public returns (bool success) {
+    Login storage login = logins[index];
+
+    if (keccak256(name) != keccak256(login.name)) {
+      login.name = name;
+    }
+
+    if (keccak256(username) != keccak256(login.username)) {
+      login.username = username;
+    }
+
+    if (keccak256(password) != keccak256(login.password)) {
+      login.password = password;
+    }
+
+    return true;
+  }
+
   function getLogin(uint id) public view returns (string name, string username, string password) {
     name = logins[id].name;
     username = logins[id].username;
