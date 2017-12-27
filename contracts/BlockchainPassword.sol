@@ -1,7 +1,7 @@
 pragma solidity ^0.4.17;
 
 contract BlockchainPassword {
-  address owner;
+  address private owner;
 
   struct Login {
     string name;
@@ -9,8 +9,8 @@ contract BlockchainPassword {
     string password;
   }
 
-  mapping (uint => Login) logins;
-  uint numLogins;
+  mapping (uint => Login) private logins;
+  uint private numLogins;
 
   // Constructor
   function BlockchainPassword() public {
