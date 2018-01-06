@@ -29,7 +29,7 @@ export default class Store {
       .on('error', (error) => { console.error('Error', error) })
       .on('transactionHash', (hash) => { console.info('Transaction hash', hash) })
       .on('receipt', (receipt) => {
-        console.info('New contract address', receipt.contractAddress)
+        console.info('New contract receipt', receipt.contractAddress)
       })
       .on('confirmation', (confirmationNumber, receipt) => {
         console.info('Confirmation', confirmationNumber, receipt);
