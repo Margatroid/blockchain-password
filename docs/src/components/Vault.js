@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Vault = () => {
+const Vault = ({address}) => {
   return <div>
-    <h1>Vault</h1>
+    <h1>Vault {address}</h1>
   </div>
 };
 

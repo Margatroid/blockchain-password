@@ -9,14 +9,15 @@ export default class Store {
       web3Enabled: false,
       accounts: [],
       view: 'Home',
+      currentAddress: null,
       currentPath: computed(() => {
         switch(this.view) {
-          case 'Vault': return '/vault/address'
+          case 'Vault': return `/vault/${this.currentAddress}`
           default: return '/'
         }
       }),
       showHome: action(() => { this.view = 'Home' }),
-      showVault: action(() => { this.view = 'Vault' })
+      showVault: action((address) => { this.view = 'Vault'; this.currentAddress = address; })
     });
 
     this.deployNewVault = this.deployNewVault.bind(this);
