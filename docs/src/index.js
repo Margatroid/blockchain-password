@@ -2,10 +2,13 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import { App, startRouter } from './App';
 import Web3 from 'web3';
+import { useStrict } from 'mobx';
+import { App, startRouter } from './App';
 import Store from './store/Store';
+import './index.css';
+
+useStrict(true);
 
 window.addEventListener('load', () => {
   let store = new Store();

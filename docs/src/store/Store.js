@@ -46,6 +46,6 @@ export default class Store {
   }
 
   loadAccountList() {
-    this.web3.eth.getAccounts((error, accounts) => { this.accounts = accounts });
+    this.web3.eth.getAccounts(action((error, accounts) => { this.accounts = accounts }));
   }
 }
