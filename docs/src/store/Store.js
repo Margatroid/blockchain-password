@@ -32,6 +32,7 @@ export default class Store {
   showVault(address) {
     action(() => {
       this.view = 'Vault';
+      this.currentAddress = address;
     })();
   }
 
@@ -47,8 +48,10 @@ export default class Store {
       .on('confirmation', (confirmationNumber, receipt) => {
         console.info('Confirmation', confirmationNumber, receipt);
       })
-      .then(function(newContractInstance){
-        console.info('New contract address', newContractInstance.options.address);
+      .then((newContractInstance) => {
+        const newContractAddress = newContractInstance.options.address;
+        console.info('New contract address', newContractAddress);
+        this.showVault(newContractAddress);
       });
   }
 
