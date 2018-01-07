@@ -15,12 +15,24 @@ export default class Store {
           case 'Vault': return `/vault/${this.currentAddress}`
           default: return '/'
         }
-      }),
-      showHome: action(() => { this.view = 'Home' }),
-      showVault: action((address) => { this.view = 'Vault'; this.currentAddress = address; })
+      })
     });
 
     this.deployNewVault = this.deployNewVault.bind(this);
+    this.showVault = this.showVault.bind(this);
+    this.showHome = this.showHome.bind(this);
+  }
+
+  showHome() {
+    action(() => {
+      this.view = 'Home'
+    })();
+  }
+
+  showVault(address) {
+    action(() => {
+      this.view = 'Vault';
+    })();
   }
 
   deployNewVault() {
