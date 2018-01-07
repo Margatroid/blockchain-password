@@ -9,10 +9,13 @@ export default class Store {
       web3Enabled: false,
       accounts: [],
       view: 'Home',
-      currentAddress: null,
+      currentVault: {
+        owner: null,
+        address: null
+      },
       currentPath: computed(() => {
         switch(this.view) {
-          case 'Vault': return `/vault/${this.currentAddress}`
+          case 'Vault': return `/vault/${this.currentVault.address}`
           default: return '/'
         }
       })
@@ -30,10 +33,14 @@ export default class Store {
   }
 
   showVault(address) {
-    action(() => {
-      this.view = 'Vault';
-      this.currentAddress = address;
-    })();
+    const vault = new this.web3.eth.Contract(contract.abi, address);
+    vault.methods.owner().call().then(
+      action((owner) => {
+        this.view = 'Vault';
+        this.currentVault.address = address;
+        this.currentVault.owner = owner;
+      })
+    );
   }
 
   deployNewVault() {

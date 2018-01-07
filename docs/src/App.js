@@ -15,7 +15,7 @@ function renderView(store) {
     case 'Home':
       return <Home/>;
     case 'Vault':
-      return <Vault address={store.currentAddress}/>;
+      return <Vault vault={store.currentVault}/>;
     default:
       return <Home/>;
   }
