@@ -2,9 +2,21 @@ import React from 'react';
 
 const Vault = ({vault}) => {
   return <div>
-    <h1>Vault</h1>
-    <p>Vault contract address: {vault.address}</p>
-    <p>Owner address: {vault.owner}</p>
+    <section className='section'>
+      <h1 className='title'>Vault</h1>
+      <table className='table is-fullwidth'>
+        <tbody>
+          <tr>
+            <td className='has-text-weight-semibold'>Contract address</td>
+            <td>{vault.address}</td>
+          </tr>
+          <tr>
+            <td className='has-text-weight-semibold'>Owner address</td>
+            <td>{vault.owner}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
   </div>
 };
 
