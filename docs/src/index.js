@@ -6,6 +6,7 @@ import Web3 from 'web3';
 import { useStrict } from 'mobx';
 import { App, startRouter } from './App';
 import Store from './store/Store';
+import 'bulma/css/bulma.css'
 import './index.css';
 
 useStrict(true);
