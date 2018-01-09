@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Home = () => {
+const Home = ({store}) => {
   return <div>
-    <section className='hero'>
+    <section className='hero is-primary'>
       <div className='hero-body'>
         <div className='container'>
           <h1 className='title'>
@@ -13,6 +13,10 @@ const Home = () => {
           </h2>
         </div>
       </div>
+    </section>
+
+    <section className='section'>
+      <a onClick={store.deployNewVault} className='button is-primary'>Deploy new vault</a>
     </section>
   </div>
 };

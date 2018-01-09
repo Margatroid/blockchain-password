@@ -11,12 +11,10 @@ import './App.css';
 
 function renderView(store) {
   switch (store.view) {
-    case 'Home':
-      return <Home/>;
     case 'Vault':
       return <Vault vault={store.currentVault}/>;
     default:
-      return <Home/>;
+      return <Home store={store}/>;
   }
 }
 
