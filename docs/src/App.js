@@ -3,7 +3,6 @@ import { Router } from 'director/build/director';
 import { observer } from 'mobx-react';
 import { autorun } from 'mobx';
 
-import WalletStatus from './components/WalletStatus';
 import Home from './components/Home';
 import Vault from './components/Vault';
 import Nav from './components/Nav';
@@ -39,9 +38,8 @@ export function startRouter(store) {
 }
 
 export const App = observer(({store}) => {
-  return <div className="app">
+  return <div className='app container'>
     <Nav store={store}/>
-    <WalletStatus store={store}/>
     {renderView(store)}
   </div>;
 });
