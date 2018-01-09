@@ -12,7 +12,7 @@ import './App.css';
 function renderView(store) {
   switch (store.view) {
     case 'Vault':
-      return <Vault vault={store.currentVault}/>;
+      return <Vault store={store}/>;
     default:
       return <Home store={store}/>;
   }

@@ -9,13 +9,13 @@ export default class Store {
       web3Enabled: false,
       accounts: [],
       view: 'Home',
-      currentVault: {
+      vault: {
         owner: null,
         address: null
       },
       currentPath: computed(() => {
         switch(this.view) {
-          case 'Vault': return `/vault/${this.currentVault.address}`
+          case 'Vault': return `/vault/${this.vault.address}`
           default: return '/'
         }
       })
@@ -37,8 +37,8 @@ export default class Store {
     vault.methods.owner().call().then(
       action((owner) => {
         this.view = 'Vault';
-        this.currentVault.address = address;
-        this.currentVault.owner = owner;
+        this.vault.address = address;
+        this.vault.owner = owner;
       })
     );
   }
