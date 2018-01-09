@@ -59,6 +59,7 @@ export default class Store {
         const newContractAddress = newContractInstance.options.address;
         console.info('New contract address', newContractAddress);
         this.showVault(newContractAddress);
+        return null;
       });
   }
 
