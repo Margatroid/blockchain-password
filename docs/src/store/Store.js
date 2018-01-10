@@ -11,7 +11,8 @@ export default class Store {
       view: 'Home',
       vault: {
         owner: null,
-        address: null
+        address: null,
+        loginNames: []
       },
       newLogin: {
         name: '',
@@ -73,9 +74,9 @@ export default class Store {
 
   getLogins(address) {
     const vault = new this.web3.eth.Contract(contract.abi, address);
-    vault.methods.getLogins().call().then((result) => {
-      console.info('Logins', result);
-    });
+    vault.methods.getLogins().call().then(action((result) => {
+      this.vault.loginNames = result.split(',');
+    }));
   }
 
   deployNewVault() {
