@@ -1,7 +1,8 @@
 import React from 'react';
 import NewLogin from './NewLogin.js';
+import { observer } from 'mobx-react';
 
-const Vault = ({store}) => {
+const Vault = observer(({store}) => {
   return <div>
     <section className='section'>
       <h1 className='title'>Vault</h1>
@@ -23,6 +24,6 @@ const Vault = ({store}) => {
       <NewLogin store={store}/>
     </section>
   </div>
-};
+});
 
 export default Vault;

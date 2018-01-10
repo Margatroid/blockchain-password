@@ -13,6 +13,11 @@ export default class Store {
         owner: null,
         address: null
       },
+      newLogin: {
+        name: '',
+        password: '',
+        username: ''
+      },
       currentPath: computed(() => {
         switch(this.view) {
           case 'Vault': return `/vault/${this.vault.address}`
