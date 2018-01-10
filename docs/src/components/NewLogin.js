@@ -9,6 +9,11 @@ const NewLogin = observer(({store}) => {
     })();
   };
 
+  const onSubmit = (event) => {
+    event.preventDefault();
+    store.addNewLogin();
+  };
+
   const {name, username, password} = store.newLogin;
 
   return <div className='card'>
@@ -20,7 +25,7 @@ const NewLogin = observer(({store}) => {
 
     <div className='card-content'>
       <div className='content'>
-        <form>
+        <form onSubmit={onSubmit}>
           <div className='field'>
             <label className='label'>Website</label>
             <div className='control'>
@@ -44,7 +49,7 @@ const NewLogin = observer(({store}) => {
 
           <div className='field'>
             <div className='control'>
-              <button className='button is-primary'>Add</button>
+              <button type='submit' className='button is-primary'>Add</button>
             </div>
           </div>
         </form>

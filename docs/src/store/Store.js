@@ -29,6 +29,8 @@ export default class Store {
     this.deployNewVault = this.deployNewVault.bind(this);
     this.showVault = this.showVault.bind(this);
     this.showHome = this.showHome.bind(this);
+    this.getLogins = this.getLogins.bind(this);
+    this.addNewLogin = this.addNewLogin.bind(this);
   }
 
   showHome() {
@@ -39,13 +41,41 @@ export default class Store {
 
   showVault(address) {
     const vault = new this.web3.eth.Contract(contract.abi, address);
-    vault.methods.owner().call().then(
+    vault.methods.getOwner().call().then(
       action((owner) => {
         this.view = 'Vault';
         this.vault.address = address;
         this.vault.owner = owner;
       })
     );
+
+    this.getLogins(address);
+  }
+
+  addNewLogin() {
+    console.log('Adding new login');
+    const contractToAddNewLogin = new this.web3.eth.Contract(contract.abi, this.vault.address);
+    contractToAddNewLogin.methods.addLogin(
+      this.newLogin.name,
+      this.newLogin.username,
+      this.newLogin.password
+    )
+      .send({ from: this.accounts[0] })
+      .on('error', (error) => { console.error('Error', error) })
+      .on('transactionHash', (hash) => { console.info('Transaction hash', hash) })
+      .on('receipt', (receipt) => {
+        console.info('New login receipt', receipt)
+      })
+      .on('confirmation', (confirmationNumber, receipt) => {
+        console.info('Confirmation', confirmationNumber, receipt);
+      });
+  }
+
+  getLogins(address) {
+    const vault = new this.web3.eth.Contract(contract.abi, address);
+    vault.methods.getLogins().call().then((result) => {
+      console.info('Logins', result);
+    });
   }
 
   deployNewVault() {

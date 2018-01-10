@@ -76,6 +76,10 @@ contract BlockchainPassword {
     return string(result);
   }
 
+  function getOwner() public view returns (address ownerAddress) {
+    return owner;
+  }
+
   function kill() public {
     if (msg.sender == owner) selfdestruct(owner);
   }
