@@ -22,6 +22,9 @@ export default class Store {
         password: '',
         username: ''
       },
+      unlockDialog: {
+        passphrase: ''
+      },
       currentPath: computed(() => {
         switch(this.view) {
           case 'Vault': return `/vault/${this.vault.address}`
@@ -35,6 +38,7 @@ export default class Store {
     this.showHome = this.showHome.bind(this);
     this.getLogins = this.getLogins.bind(this);
     this.addNewLogin = this.addNewLogin.bind(this);
+    this.unlockVault = this.unlockVault.bind(this);
   }
 
   showHome() {
@@ -72,6 +76,15 @@ export default class Store {
       .on('confirmation', (confirmationNumber, receipt) => {
         console.info('Confirmation', confirmationNumber, receipt);
       });
+  }
+
+  unlockVault() {
+    const salt = this.accounts[0];
+    const encryptedPassphrase = PBKDF2(this.unlockDialog.passphrase, salt, { keySize: 4096/32, iterations: 128 }).toString();
+    action(() => {
+      this.unlockDialog.passphrase = '';
+      this.vault.encryptionKey = encryptedPassphrase;
+    })();
   }
 
   getLogins(address) {

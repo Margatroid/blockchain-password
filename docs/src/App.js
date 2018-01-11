@@ -5,6 +5,7 @@ import { autorun } from 'mobx';
 
 import Home from './components/Home';
 import Vault from './components/Vault';
+import LockedVault from './components/LockedVault';
 import Nav from './components/Nav';
 
 import './App.css';
@@ -12,7 +13,10 @@ import './App.css';
 function renderView(store) {
   switch (store.view) {
     case 'Vault':
-      return <Vault store={store}/>;
+      if (store.vault.encryptionKey) {
+        return <Vault store={store}/>;
+      }
+      return <LockedVault store={store}/>;
     default:
       return <Home store={store}/>;
   }
