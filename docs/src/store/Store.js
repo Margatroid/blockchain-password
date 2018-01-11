@@ -1,5 +1,7 @@
 import { action, computed, extendObservable } from 'mobx';
 import contract from '../BlockchainPassword.json';
+//import AES from 'crypto-js/aes';
+import PBKDF2 from 'crypto-js/pbkdf2';
 
 export default class Store {
   constructor(web3) {
@@ -12,7 +14,8 @@ export default class Store {
       vault: {
         owner: null,
         address: null,
-        loginNames: []
+        loginNames: [],
+        encryptionKey: null
       },
       newLogin: {
         name: '',
@@ -54,7 +57,6 @@ export default class Store {
   }
 
   addNewLogin() {
-    console.log('Adding new login');
     const contractToAddNewLogin = new this.web3.eth.Contract(contract.abi, this.vault.address);
     contractToAddNewLogin.methods.addLogin(
       this.newLogin.name,
