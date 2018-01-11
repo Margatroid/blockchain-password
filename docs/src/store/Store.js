@@ -1,7 +1,14 @@
 import { action, computed, extendObservable } from 'mobx';
 import contract from '../BlockchainPassword.json';
-//import AES from 'crypto-js/aes';
-import PBKDF2 from 'crypto-js/pbkdf2';
+import CryptoJS from 'crypto-js';
+
+function encrypt(key, input) {
+  return CryptoJS.AES.encrypt(input, key).toString();
+}
+
+function decrypt(key, input) {
+  return CryptoJS.AES.decrypt(input, key).toString(CryptoJS.enc.Utf8);
+}
 
 export default class Store {
   constructor(web3) {
@@ -57,15 +64,17 @@ export default class Store {
       })
     );
 
-    this.getLogins(address);
+    if (this.vault.encryptionKey) {
+      this.getLogins(address);
+    }
   }
 
   addNewLogin() {
     const contractToAddNewLogin = new this.web3.eth.Contract(contract.abi, this.vault.address);
     contractToAddNewLogin.methods.addLogin(
-      this.newLogin.name,
-      this.newLogin.username,
-      this.newLogin.password
+      encrypt(this.vault.encryptionKey, this.newLogin.name),
+      encrypt(this.vault.encryptionKey, this.newLogin.username),
+      encrypt(this.vault.encryptionKey, this.newLogin.password)
     )
       .send({ from: this.accounts[0] })
       .on('error', (error) => { console.error('Error', error) })
@@ -80,17 +89,18 @@ export default class Store {
 
   unlockVault() {
     const salt = this.accounts[0];
-    const encryptedPassphrase = PBKDF2(this.unlockDialog.passphrase, salt, { keySize: 4096/32, iterations: 128 }).toString();
+    const encryptedPassphrase = CryptoJS.PBKDF2(this.unlockDialog.passphrase, salt, { keySize: 4096/32, iterations: 128 }).toString();
     action(() => {
       this.unlockDialog.passphrase = '';
       this.vault.encryptionKey = encryptedPassphrase;
+      this.getLogins(this.vault.address);
     })();
   }
 
   getLogins(address) {
     const vault = new this.web3.eth.Contract(contract.abi, address);
     vault.methods.getLogins().call().then(action((result) => {
-      this.vault.loginNames = result.split(',');
+      this.vault.loginNames = result.split(',').map((loginName) => decrypt(this.vault.encryptionKey, loginName))
     }));
   }
 
