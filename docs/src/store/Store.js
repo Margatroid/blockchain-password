@@ -10,6 +10,10 @@ function decrypt(key, input) {
   return CryptoJS.AES.decrypt(input, key).toString(CryptoJS.enc.Utf8);
 }
 
+function getEncryptedPassphrase(passphrase, salt) {
+  return CryptoJS.PBKDF2(passphrase, salt, { keySize: 4096/32, iterations: 128 }).toString();
+}
+
 export default class Store {
   constructor(web3) {
     this.web3 = web3;
@@ -31,6 +35,12 @@ export default class Store {
       },
       unlockDialog: {
         passphrase: ''
+      },
+      newVaultDialog: {
+        passphrase: '',
+        disableForm: computed(() => {
+          return !this.newVaultDialog.passphrase.trim().length;
+        })
       },
       currentPath: computed(() => {
         switch(this.view) {
@@ -88,8 +98,7 @@ export default class Store {
   }
 
   unlockVault() {
-    const salt = this.accounts[0];
-    const encryptedPassphrase = CryptoJS.PBKDF2(this.unlockDialog.passphrase, salt, { keySize: 4096/32, iterations: 128 }).toString();
+    const encryptedPassphrase = getEncryptedPassphrase(this.unlockDialog.passphrase, this.accounts[0]);
     action(() => {
       this.unlockDialog.passphrase = '';
       this.vault.encryptionKey = encryptedPassphrase;
@@ -106,7 +115,10 @@ export default class Store {
 
   deployNewVault() {
     const contractToDeploy = new this.web3.eth.Contract(contract.abi);
-    contractToDeploy.deploy({ data: contract.bytecode })
+    const encryptedPassphrase = getEncryptedPassphrase(this.newVaultDialog.passphrase, this.accounts[0]);
+    const encryptedTestPhrase = encrypt(encryptedPassphrase, this.accounts[0]);
+
+    contractToDeploy.deploy({ data: contract.bytecode, arguments: [encryptedTestPhrase] })
       .send({ from: this.accounts[0] })
       .on('error', (error) => { console.error('Error', error) })
       .on('transactionHash', (hash) => { console.info('Transaction hash', hash) })
@@ -119,7 +131,9 @@ export default class Store {
       .then((newContractInstance) => {
         const newContractAddress = newContractInstance.options.address;
         console.info('New contract address', newContractAddress);
+
         this.showVault(newContractAddress);
+        action(() => { this.newVaultDialog.passphrase = '' })();
         return null;
       });
   }

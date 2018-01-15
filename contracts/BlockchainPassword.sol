@@ -2,6 +2,7 @@ pragma solidity ^0.4.17;
 
 contract BlockchainPassword {
   address private owner;
+  string private testPhrase;
 
   struct Login {
     string name;
@@ -13,9 +14,10 @@ contract BlockchainPassword {
   uint private numLogins;
 
   // Constructor
-  function BlockchainPassword() public {
+  function BlockchainPassword(string encryptedTestPhrase) public {
     owner = msg.sender;
     numLogins = 0;
+    testPhrase = encryptedTestPhrase;
   }
 
   function addLogin(string name, string username, string password) public returns (bool success) {
