@@ -78,6 +78,10 @@ contract BlockchainPassword {
     return string(result);
   }
 
+  function getTestPhrase() public view returns (string phrase) {
+    return testPhrase;
+  }
+
   function getOwner() public view returns (address ownerAddress) {
     return owner;
   }

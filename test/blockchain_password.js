@@ -73,4 +73,13 @@ contract('BlockchainPassword', function(accounts) {
       done();
     });
   });
+
+  it('should retrieve the test phrase', function(done) {
+    BlockchainPassword.new('helloworld').then(function(instance) {
+      return instance.getTestPhrase.call();
+    }).then(function(result) {
+      assert.equal(result, 'helloworld');
+      done();
+    });
+  });
 });
