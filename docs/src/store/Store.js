@@ -34,7 +34,8 @@ export default class Store {
         username: ''
       },
       unlockDialog: {
-        passphrase: ''
+        passphrase: '',
+        incorrectPassphrase: false
       },
       newVaultDialog: {
         passphrase: '',
@@ -99,11 +100,22 @@ export default class Store {
 
   unlockVault() {
     const encryptedPassphrase = getEncryptedPassphrase(this.unlockDialog.passphrase, this.accounts[0]);
-    action(() => {
-      this.unlockDialog.passphrase = '';
-      this.vault.encryptionKey = encryptedPassphrase;
-      this.getLogins(this.vault.address);
-    })();
+    const vault = new this.web3.eth.Contract(contract.abi, this.vault.address);
+
+    vault.methods.getTestPhrase().call().then(
+      action((phrase) => {
+        const decryptedTestPhrase = decrypt(encryptedPassphrase, phrase);
+        this.unlockDialog.passphrase = '';
+        if (decryptedTestPhrase === this.accounts[0]) {
+          // Passphrase is correct.
+          this.vault.encryptionKey = encryptedPassphrase;
+          // @TODO: Refactor to avoid creating another promise.
+          this.getLogins(this.vault.address);
+        } else {
+          this.unlockDialog.incorrectPassphrase = true;
+        }
+      })
+    );
   }
 
   getLogins(address) {

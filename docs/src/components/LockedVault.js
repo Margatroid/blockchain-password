@@ -14,7 +14,33 @@ const LockedVault = observer(({store}) => {
     })();
   };
 
+  const closeModal = () => {
+    action(() => {
+      // @TODO: Refactor these into the stores.
+      store.unlockDialog.incorrectPassphrase = false;
+    })();
+  };
+
+  let passphraseError;
+  if (store.unlockDialog.incorrectPassphrase) {
+    passphraseError = <div className='modal is-active'>
+      <div onClick={closeModal} className='modal-background'></div>
+      <div className='modal-content'>
+        <article className='message is-danger'>
+          <div className='message-header'>
+            <p>Error</p>
+            <button onClick={closeModal} className='delete' aria-label='delete'></button>
+          </div>
+          <div className='message-body'>
+            Incorrect passphrase.
+          </div>
+      </article>
+      </div>
+    </div>;
+  }
+
   return <div>
+    {passphraseError}
     <section className='section'>
       <h1 className='title'>This vault is locked</h1>
       <form onSubmit={onSubmit}>
