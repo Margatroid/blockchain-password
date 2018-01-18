@@ -1,6 +1,7 @@
 import { action, computed, extendObservable } from 'mobx';
 import contract from '../BlockchainPassword.json';
 import CryptoJS from 'crypto-js';
+import Blockchain from '../Blockchain';
 
 function encrypt(key, input) {
   return CryptoJS.AES.encrypt(input, key).toString();
@@ -15,9 +16,7 @@ function getEncryptedPassphrase(passphrase, salt) {
 }
 
 export default class Store {
-  constructor(web3) {
-    this.web3 = web3;
-
+  constructor(blockchain) {
     extendObservable(this, {
       web3Enabled: false,
       accounts: [],
@@ -57,6 +56,12 @@ export default class Store {
     this.getLogins = this.getLogins.bind(this);
     this.addNewLogin = this.addNewLogin.bind(this);
     this.unlockVault = this.unlockVault.bind(this);
+
+    this.blockchain = new Blockchain();
+    if (this.blockchain.web3Enabled) {
+      this.web3Enabled = true;
+      this.load();
+    }
   }
 
   showHome() {
@@ -151,7 +156,6 @@ export default class Store {
   }
 
   load() {
-    if (!this.web3Enabled) return;
     this.loadAccountList();
   }
 
