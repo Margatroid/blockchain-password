@@ -37,7 +37,7 @@ export default class Store {
     this.deployNewVault = this.deployNewVault.bind(this);
     this.showVault = this.showVault.bind(this);
     this.showHome = this.showHome.bind(this);
-    this.getLogins = this.getLogins.bind(this);
+    this.refreshLogins = this.refreshLogins.bind(this);
     this.addNewLogin = this.addNewLogin.bind(this);
     this.unlockVault = this.unlockVault.bind(this);
 
@@ -61,7 +61,10 @@ export default class Store {
 
   // Add new login to an existing vault.
   addNewLogin() {
-    this.vaultHelper.addNewLogin(this.newLogin.name, this.newLogin.username, this.newLogin.password);
+    this.vaultHelper.addNewLogin(this.newLogin.name, this.newLogin.username, this.newLogin.password)
+      .then(() => {
+        this.refreshLogins();
+      });
   }
 
   // Verifies passphrase and temporarily stores hashed passphrase in vault wrapper.
@@ -71,14 +74,18 @@ export default class Store {
         // Passphrase is correct. Load vault.
         this.vault.locked = false;
       }))
+      .then(() => {
+        this.refreshLogins();
+      })
       .catch(action(() => {
         this.unlockDialog.incorrectPassphrase = true;
       }));
   }
 
-  // Gets list of login names associated with current unlocked vault, used to build vault index.
-  getLogins(address) {
-    this.vaultHelper.getLogins(address).then(action((result) => {
+  // Gets list of login names associated with current unlocked vault.
+  refreshLogins() {
+    this.vaultHelper.getLogins().then(action((result) => {
+      console.log('Logins fetched', result);
       this.vault.loginNames = result;
     }));
   }
