@@ -18,10 +18,6 @@ const Vault = observer(({store}) => {
             <td className='has-text-weight-semibold'>Contract address</td>
             <td>{store.vault.address}</td>
           </tr>
-          <tr>
-            <td className='has-text-weight-semibold'>Owner address</td>
-            <td>{store.vault.owner}</td>
-          </tr>
         </tbody>
       </table>
     </section>

@@ -13,10 +13,10 @@ import './App.css';
 function renderView(store) {
   switch (store.view) {
     case 'Vault':
-      if (store.vault.encryptionKey) {
-        return <Vault store={store}/>;
+      if (store.vault.locked) {
+        return <LockedVault store={store}/>;
       }
-      return <LockedVault store={store}/>;
+      return <Vault store={store}/>;
     default:
       return <Home store={store}/>;
   }

@@ -1,31 +1,15 @@
 import { action, computed, extendObservable } from 'mobx';
-import contract from '../BlockchainPassword.json';
-import CryptoJS from 'crypto-js';
-import Blockchain from '../Blockchain';
-
-function encrypt(key, input) {
-  return CryptoJS.AES.encrypt(input, key).toString();
-}
-
-function decrypt(key, input) {
-  return CryptoJS.AES.decrypt(input, key).toString(CryptoJS.enc.Utf8);
-}
-
-function getEncryptedPassphrase(passphrase, salt) {
-  return CryptoJS.PBKDF2(passphrase, salt, { keySize: 4096/32, iterations: 128 }).toString();
-}
+import VaultHelper from '../VaultHelper';
 
 export default class Store {
-  constructor(blockchain) {
+  constructor() {
     extendObservable(this, {
       web3Enabled: false,
-      accounts: [],
       view: 'Home',
       vault: {
-        owner: null,
         address: null,
         loginNames: [],
-        encryptionKey: null
+        locked: true
       },
       newLogin: {
         name: '',
@@ -57,11 +41,7 @@ export default class Store {
     this.addNewLogin = this.addNewLogin.bind(this);
     this.unlockVault = this.unlockVault.bind(this);
 
-    this.blockchain = new Blockchain();
-    if (this.blockchain.web3Enabled) {
-      this.web3Enabled = true;
-      this.load();
-    }
+    this.vaultHelper = new VaultHelper();
   }
 
   showHome() {
@@ -71,95 +51,43 @@ export default class Store {
   }
 
   showVault(address) {
-    const vault = new this.web3.eth.Contract(contract.abi, address);
-    vault.methods.getOwner().call().then(
-      action((owner) => {
-        this.view = 'Vault';
-        this.vault.address = address;
-        this.vault.owner = owner;
-      })
-    );
+    this.vaultHelper = new VaultHelper(address);
 
-    if (this.vault.encryptionKey) {
-      this.getLogins(address);
-    }
+    action(() => {
+      this.view = 'Vault';
+      this.vault.address = address;
+    })();
   }
 
+  // Add new login to an existing vault.
   addNewLogin() {
-    const contractToAddNewLogin = new this.web3.eth.Contract(contract.abi, this.vault.address);
-    contractToAddNewLogin.methods.addLogin(
-      encrypt(this.vault.encryptionKey, this.newLogin.name),
-      encrypt(this.vault.encryptionKey, this.newLogin.username),
-      encrypt(this.vault.encryptionKey, this.newLogin.password)
-    )
-      .send({ from: this.accounts[0] })
-      .on('error', (error) => { console.error('Error', error) })
-      .on('transactionHash', (hash) => { console.info('Transaction hash', hash) })
-      .on('receipt', (receipt) => {
-        console.info('New login receipt', receipt)
-      })
-      .on('confirmation', (confirmationNumber, receipt) => {
-        console.info('Confirmation', confirmationNumber, receipt);
-      });
+    this.vaultHelper.addNewLogin(this.newLogin.name, this.newLogin.username, this.newLogin.password);
   }
 
+  // Verifies passphrase and temporarily stores hashed passphrase in vault wrapper.
   unlockVault() {
-    const encryptedPassphrase = getEncryptedPassphrase(this.unlockDialog.passphrase, this.accounts[0]);
-    const vault = new this.web3.eth.Contract(contract.abi, this.vault.address);
-
-    vault.methods.getTestPhrase().call().then(
-      action((phrase) => {
-        const decryptedTestPhrase = decrypt(encryptedPassphrase, phrase);
-        this.unlockDialog.passphrase = '';
-        if (decryptedTestPhrase === this.accounts[0]) {
-          // Passphrase is correct.
-          this.vault.encryptionKey = encryptedPassphrase;
-          // @TODO: Refactor to avoid creating another promise.
-          this.getLogins(this.vault.address);
-        } else {
-          this.unlockDialog.incorrectPassphrase = true;
-        }
-      })
-    );
+    this.vaultHelper.unlockVault(this.unlockDialog.passphrase)
+      .then(action(() => {
+        // Passphrase is correct. Load vault.
+        this.vault.locked = false;
+      }))
+      .catch(action(() => {
+        this.unlockDialog.incorrectPassphrase = true;
+      }));
   }
 
+  // Gets list of login names associated with current unlocked vault, used to build vault index.
   getLogins(address) {
-    const vault = new this.web3.eth.Contract(contract.abi, address);
-    vault.methods.getLogins().call().then(action((result) => {
-      this.vault.loginNames = result.split(',').map((loginName) => decrypt(this.vault.encryptionKey, loginName))
+    this.vaultHelper.getLogins(address).then(action((result) => {
+      this.vault.loginNames = result;
     }));
   }
 
   deployNewVault() {
-    const contractToDeploy = new this.web3.eth.Contract(contract.abi);
-    const encryptedPassphrase = getEncryptedPassphrase(this.newVaultDialog.passphrase, this.accounts[0]);
-    const encryptedTestPhrase = encrypt(encryptedPassphrase, this.accounts[0]);
-
-    contractToDeploy.deploy({ data: contract.bytecode, arguments: [encryptedTestPhrase] })
-      .send({ from: this.accounts[0] })
-      .on('error', (error) => { console.error('Error', error) })
-      .on('transactionHash', (hash) => { console.info('Transaction hash', hash) })
-      .on('receipt', (receipt) => {
-        console.info('New contract receipt', receipt.contractAddress)
-      })
-      .on('confirmation', (confirmationNumber, receipt) => {
-        console.info('Confirmation', confirmationNumber, receipt);
-      })
-      .then((newContractInstance) => {
-        const newContractAddress = newContractInstance.options.address;
-        console.info('New contract address', newContractAddress);
-
-        this.showVault(newContractAddress);
-        action(() => { this.newVaultDialog.passphrase = '' })();
-        return null;
-      });
-  }
-
-  load() {
-    this.loadAccountList();
-  }
-
-  loadAccountList() {
-    this.web3.eth.getAccounts(action((error, accounts) => { this.accounts = accounts }));
+    this.vaultHelper.deployNewVault(this.newVaultDialog.passphrase)
+      .then((address) => this.showVault(address))
+      .then(action(() => {
+        this.vault.locked = false;
+      }));
   }
 }
