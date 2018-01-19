@@ -16,6 +16,12 @@ export default class Store {
         password: '',
         username: ''
       },
+      viewLoginDialog: {
+        name: '',
+        username: '',
+        password: '',
+        open: false
+      },
       unlockDialog: {
         passphrase: '',
         incorrectPassphrase: false
@@ -70,6 +76,14 @@ export default class Store {
       .then(() => {
         this.refreshLogins();
       });
+  }
+
+  // Opens the login info modal to see the password.
+  getLogin(index) {
+    return this.vaultHelper.getLogin(index)
+      .then(action((login) => {
+        this.viewLoginDialog = {...this.viewLoginDialog, open: true, ...login};
+      }));
   }
 
   // Verifies passphrase and temporarily stores hashed passphrase in vault wrapper.
