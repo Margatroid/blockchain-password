@@ -51,7 +51,7 @@ export default class Store {
   }
 
   showVault(address) {
-    this.vaultHelper = new VaultHelper(address);
+    this.vaultHelper.address = address;
 
     action(() => {
       this.view = 'Vault';

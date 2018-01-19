@@ -16,7 +16,7 @@ function getHashedPassphrase(passphrase, salt) {
 }
 
 export default class VaultHelper {
-  constructor(address) {
+  constructor() {
     // Checking if Web3 has been injected by the browser (Mist/MetaMask)
     if (typeof web3 === 'undefined') {
       this.web3Enabled = false;
@@ -25,7 +25,6 @@ export default class VaultHelper {
 
     this.web3 = new Web3(web3.currentProvider);
     this.web3Enabled = true;
-    this.address = address;
   }
 
   // Gets the current active account/wallet.
