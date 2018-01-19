@@ -1,6 +1,7 @@
 import React from 'react';
-import NewLogin from './NewLogin.js';
 import { observer } from 'mobx-react';
+import NewLogin from './NewLogin.js';
+import LoginModal from './LoginModal.js';
 
 const Vault = observer(({store}) => {
   const loginNames = store.vault.loginNames.map((loginName, index) => {
@@ -10,7 +11,11 @@ const Vault = observer(({store}) => {
     </tr>
   });
 
+  const loginModal = (store.viewLoginDialog.show) ? <LoginModal store={store}/> : null;
+
   return <div>
+    {loginModal}
+
     <section className='section'>
       <h1 className='title'>Vault</h1>
       <table className='table is-fullwidth'>

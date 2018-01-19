@@ -46,6 +46,7 @@ export default class Store {
     this.refreshLogins = this.refreshLogins.bind(this);
     this.addNewLogin = this.addNewLogin.bind(this);
     this.unlockVault = this.unlockVault.bind(this);
+    this.closeLoginInfoModal = this.closeLoginInfoModal.bind(this);
 
     this.vaultHelper = new VaultHelper();
   }
@@ -84,6 +85,12 @@ export default class Store {
       .then(action((login) => {
         this.viewLoginDialog = {...this.viewLoginDialog, show: true, ...login};
       }));
+  }
+
+  closeLoginInfoModal() {
+    action(() => {
+      this.viewLoginDialog.show = false;
+    })();
   }
 
   // Verifies passphrase and temporarily stores hashed passphrase in vault wrapper.
