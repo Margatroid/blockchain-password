@@ -61,7 +61,12 @@ export default class Store {
 
   // Add new login to an existing vault.
   addNewLogin() {
-    this.vaultHelper.addNewLogin(this.newLogin.name, this.newLogin.username, this.newLogin.password)
+    return this.vaultHelper.addNewLogin(this.newLogin.name, this.newLogin.username, this.newLogin.password)
+      .then(action(() => {
+        this.newLogin.name = '';
+        this.newLogin.username = '';
+        this.newLogin.password = '';
+      }))
       .then(() => {
         this.refreshLogins();
       });
@@ -85,7 +90,6 @@ export default class Store {
   // Gets list of login names associated with current unlocked vault.
   refreshLogins() {
     this.vaultHelper.getLogins().then(action((result) => {
-      console.log('Logins fetched', result);
       this.vault.loginNames = result;
     }));
   }
