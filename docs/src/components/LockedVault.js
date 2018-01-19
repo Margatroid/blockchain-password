@@ -17,12 +17,12 @@ const LockedVault = observer(({store}) => {
   const closeModal = () => {
     action(() => {
       // @TODO: Refactor these into the stores.
-      store.unlockDialog.incorrectPassphrase = false;
+      store.unlockDialog.show = false;
     })();
   };
 
   let passphraseError;
-  if (store.unlockDialog.incorrectPassphrase) {
+  if (store.unlockDialog.show) {
     passphraseError = <div className='modal is-active'>
       <div onClick={closeModal} className='modal-background'></div>
       <div className='modal-content'>

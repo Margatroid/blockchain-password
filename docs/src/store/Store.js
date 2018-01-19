@@ -20,11 +20,11 @@ export default class Store {
         name: '',
         username: '',
         password: '',
-        open: false
+        show: false
       },
       unlockDialog: {
         passphrase: '',
-        incorrectPassphrase: false
+        show: false
       },
       newVaultDialog: {
         passphrase: '',
@@ -82,13 +82,13 @@ export default class Store {
   getLogin(index) {
     return this.vaultHelper.getLogin(index)
       .then(action((login) => {
-        this.viewLoginDialog = {...this.viewLoginDialog, open: true, ...login};
+        this.viewLoginDialog = {...this.viewLoginDialog, show: true, ...login};
       }));
   }
 
   // Verifies passphrase and temporarily stores hashed passphrase in vault wrapper.
   unlockVault() {
-    this.vaultHelper.unlockVault(this.unlockDialog.passphrase)
+    return this.vaultHelper.unlockVault(this.unlockDialog.passphrase)
       .then(action(() => {
         // Passphrase is correct. Load vault.
         this.vault.locked = false;
@@ -97,7 +97,7 @@ export default class Store {
         this.refreshLogins();
       })
       .catch(action(() => {
-        this.unlockDialog.incorrectPassphrase = true;
+        this.unlockDialog.show = true;
       }));
   }
 
