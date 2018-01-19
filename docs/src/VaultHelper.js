@@ -53,6 +53,23 @@ export default class VaultHelper {
     });
   }
 
+  // Gets and decrypts login details.
+  getLogin(id) {
+    if (!this.hashedPassphrase) {
+      return Promise.reject(new Error('Vault is still locked'));
+    }
+
+    const vault = new this.web3.eth.Contract(contract.abi, this.address);
+    return vault.methods.getLogin(id).call()
+      .then((result) => {
+        return {
+          name: decrypt(this.hashedPassphrase, result.name),
+          username: decrypt(this.hashedPassphrase, result.username),
+          password: decrypt(this.hashedPassphrase, result.password)
+        };
+      });
+  }
+
   // Gets list of login names associated with current unlocked vault, used to build vault index.
   async getLogins() {
     if (!this.hashedPassphrase) {

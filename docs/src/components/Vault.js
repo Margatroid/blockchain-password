@@ -3,11 +3,12 @@ import NewLogin from './NewLogin.js';
 import { observer } from 'mobx-react';
 
 const Vault = observer(({store}) => {
-  const loginNames = store.vault.loginNames.map((loginName, index) =>
-    <tr key={index}>
+  const loginNames = store.vault.loginNames.map((loginName, index) => {
+    const onClick = () => { store.getLogin(index) };
+    return <tr onClick={onClick} key={index}>
       <td>{loginName}</td>
     </tr>
-  );
+  });
 
   return <div>
     <section className='section'>
@@ -38,7 +39,7 @@ const Vault = observer(({store}) => {
         </div>
       </nav>
 
-      <table className='table is-fullwidth'>
+      <table className='table is-hoverable is-fullwidth'>
         <tbody>
           {loginNames}
         </tbody>
