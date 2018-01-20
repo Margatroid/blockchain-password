@@ -28,6 +28,20 @@ const Home = observer(({store}) => {
       </div>
     </section>
 
+    <div className='columns'>
+      <div className='column'>
+        <div className='section'>
+          <h1 className='title'>About</h1>
+        </div>
+      </div>
+
+      <div className='column'>
+        <div className='section'>
+          <h1 className='title'>How to get started</h1>
+        </div>
+      </div>
+    </div>
+
     <section className='section'>
       <form onSubmit={onSubmit}>
         <div className='field'>
