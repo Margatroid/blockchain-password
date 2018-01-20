@@ -20,7 +20,8 @@ export default class Store {
         name: '',
         username: '',
         password: '',
-        show: false
+        show: false,
+        editMode: false
       },
       unlockDialog: {
         passphrase: '',
@@ -83,10 +84,28 @@ export default class Store {
   getLogin(index) {
     return this.vaultHelper.getLogin(index)
       .then(action((login) => {
-        this.viewLoginDialog = {...this.viewLoginDialog, show: true, ...login};
+        this.viewLoginDialog = {
+          ...this.viewLoginDialog,
+          show: true,
+          index,
+          ...login
+        };
       }));
   }
 
+  // Saves changes made in an open login info modal.
+  saveLoginInfoModal() {
+    const args = [
+      this.viewLoginDialog.index,
+      this.viewLoginDialog.name,
+      this.viewLoginDialog.username,
+      this.viewLoginDialog.password
+    ];
+    return this.vaultHelper.setLogin(...args)
+      .then(this.closeLoginInfoModal);
+  }
+
+  // Closes an open login info modal.
   closeLoginInfoModal() {
     action(() => {
       this.viewLoginDialog.show = false;

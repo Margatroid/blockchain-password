@@ -84,6 +84,31 @@ export default class VaultHelper {
     });
   }
 
+  async setLogin(index, name, username, password) {
+    if (!this.hashedPassphrase) {
+      return Promise.reject(new Error('Vault is still locked'));
+    }
+
+    const vault = new this.web3.eth.Contract(contract.abi, this.address);
+    const account = await this.getAccountAddress();
+    const encryptedLogin = [
+      encrypt(this.hashedPassphrase, name),
+      encrypt(this.hashedPassphrase, username),
+      encrypt(this.hashedPassphrase, password)
+    ];
+
+    return vault.methods.setLogin(index, ...encryptedLogin)
+      .send({ from: account })
+      .on('error', (error) => { console.error('Error', error) })
+      .on('transactionHash', (hash) => { console.info('Transaction hash', hash) })
+      .on('receipt', (receipt) => {
+        console.info('New login receipt', receipt)
+      })
+      .on('confirmation', (confirmationNumber, receipt) => {
+        console.info('Confirmation', confirmationNumber, receipt);
+      });
+  }
+
   // Add new login to an existing vault.
   async addNewLogin(name, username, password) {
     if (!this.hashedPassphrase) {

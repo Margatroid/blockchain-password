@@ -36,6 +36,8 @@ it('loads a login', () => {
     expect(store.viewLoginDialog.username).toBe('u');
     expect(store.viewLoginDialog.name).toBe('n');
     expect(store.viewLoginDialog.password).toBe('p');
+    expect(store.viewLoginDialog.index).toBe(1);
+    expect(store.viewLoginDialog.editMode).toBe(false);
   });
 });
 
