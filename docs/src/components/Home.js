@@ -61,7 +61,7 @@ const Home = observer(({store}) => {
             </p>
             <p>
               Due to the open nature of the blockchain, the contents of your encrypted vault can be
-              read by anyone. However it is impossible to derive the decrypted contents (in theory).
+              read by anyone. However it is nearly impossible to derive the decrypted contents (in theory).
             </p>
 
             <p>Use at your own risk.</p>
