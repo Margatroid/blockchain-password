@@ -31,7 +31,9 @@ export default class Store {
         passphrase: '',
         disableForm: computed(() => {
           return !this.newVaultDialog.passphrase.trim().length;
-        })
+        }),
+        isDeploying: false,
+        deploymentTransactionId: null
       },
       currentPath: computed(() => {
         switch(this.view) {
@@ -135,10 +137,15 @@ export default class Store {
   }
 
   deployNewVault() {
+    action(() => {
+      this.newVaultDialog.isDeploying = true;
+    })();
+
     this.vaultHelper.deployNewVault(this.newVaultDialog.passphrase)
       .then((address) => this.showVault(address))
       .then(action(() => {
         this.vault.locked = false;
+        this.newVaultDialog.isDeploying = false;
       }));
   }
 }

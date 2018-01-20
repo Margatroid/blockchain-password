@@ -14,6 +14,12 @@ const Home = observer(({store}) => {
     })();
   };
 
+  const submitButton = (store.newVaultDialog.isDeploying) ?
+    <div className='notification is-info'>
+      <strong>Please wait while your vault is being deployed.</strong>
+    </div> :
+    <button disabled={store.newVaultDialog.disableForm} type='submit' className='button is-primary'>Deploy new vault</button>;
+
   return <div>
     <section className='hero is-primary'>
       <div className='hero-body'>
@@ -50,6 +56,7 @@ const Home = observer(({store}) => {
             <input name='name'
               onChange={onChange}
               className='input'
+              disabled={store.newVaultDialog.isDeploying}
               type='password'
               value={store.newVaultDialog.passphrase}
               placeholder='Enter passphrase to encrypt your vault contents'
@@ -59,7 +66,7 @@ const Home = observer(({store}) => {
 
         <div className='field'>
           <div className='control'>
-            <button disabled={store.newVaultDialog.disableForm} type='submit' className='button is-primary'>Deploy new vault</button>
+            {submitButton}
           </div>
         </div>
       </form>
