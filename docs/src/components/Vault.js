@@ -28,6 +28,12 @@ const Vault = observer(({store}) => {
       </table>
     </section>
 
+    <section>
+      Bookmark this page to quickly access your own vault.
+      In the event that you lost this vault's address,
+      use Etherscan on your own account to relocate this vault's contract address.
+    </section>
+
     <section className='section'>
       <NewLogin store={store}/>
     </section>
