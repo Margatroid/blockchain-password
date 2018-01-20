@@ -12,7 +12,7 @@ function decrypt(key, input) {
 }
 
 function getHashedPassphrase(passphrase, salt) {
-  return CryptoJS.PBKDF2(passphrase, salt, { keySize: 4096/32, iterations: 128 }).toString();
+  return CryptoJS.PBKDF2(passphrase, salt, { keySize: 4096/32, iterations: 4096 }).toString();
 }
 
 export default class VaultHelper {
