@@ -49,9 +49,11 @@ const LoginModal = observer(({store}) => {
               </div>
             </div>
 
-            <div className='field'>
+            <div className='field is-grouped'>
               <div className='control'>
                 <button type='submit' className='button is-primary'>Save changes</button>
+              </div>
+              <div className='control'>
                 <button onClick={onCancel} className='button'>Cancel</button>
               </div>
             </div>
