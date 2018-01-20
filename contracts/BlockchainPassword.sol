@@ -21,6 +21,7 @@ contract BlockchainPassword {
   }
 
   function addLogin(string name, string username, string password) public returns (bool success) {
+    if (msg.sender != owner) return;
     logins[numLogins].name = name;
     logins[numLogins].username = username;
     logins[numLogins].password = password;
@@ -29,6 +30,8 @@ contract BlockchainPassword {
   }
 
   function setLogin(uint index, string name, string username, string password) public returns (bool success) {
+    if (msg.sender != owner) return;
+
     Login storage login = logins[index];
 
     if (keccak256(name) != keccak256(login.name)) {
