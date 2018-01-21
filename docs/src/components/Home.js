@@ -57,11 +57,11 @@ const Home = observer(({store}) => {
               inside vaults that you own (deployed).
             </p>
             <p>
-              See a demonstration in this video.
+              See a demonstration in this <a href='https://www.youtube.com/watch?v=4nbHlK2CGRc'>video</a>.
             </p>
             <h2>How secure is this?</h2>
             <p>
-              All the code is open-source and available here. The crypto-js library is used
+              All the code is open-source and available <a href='https://github.com/Margatroid/blockchain-password'>here</a>. The crypto-js library is used
               to provide the encryption standards. You provide a passphrase which passes through
               PBKDF2 to derive a much longer hashed key. This key is then used to encrypt and decrypt
               the vault contents with AES.
