@@ -57,6 +57,7 @@ export default class Store {
   showHome() {
     action(() => {
       this.view = 'Home'
+      this.web3Enabled = this.vaultHelper.web3Enabled;
     })();
   }
 

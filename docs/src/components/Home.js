@@ -20,6 +20,13 @@ const Home = observer(({store}) => {
     </div> :
     <button disabled={store.newVaultDialog.disableForm} type='submit' className='button is-primary'>Deploy new vault</button>;
 
+  const web3Warning = (store.web3Enabled) ? null :
+    <article className='message is-info'>
+      <div className='message-body'>
+        A web3 compatible browser is required to continue.
+      </div>
+    </article>;
+
   return <div>
     <section className='hero is-primary'>
       <div className='hero-body'>
@@ -74,13 +81,14 @@ const Home = observer(({store}) => {
           <div className='content'>
             <h2>Get started</h2>
             <p>
-              <strong>An Ethereum compatible browser is required to use this app.</strong>
+              <strong>An Ethereum (web3) compatible browser is required to use this app.</strong>
               The easiest way is to get Metamask. Blockchain Password has only been deployed
               to the test networks so far due to the high gas prices on the main
               Ethereum network.
             </p>
             <p>
-              Once you've got that running with some Ether in your acccount, you should be able
+              Once you've got that running with some Ether in your acccount and it is ready to
+              use in Metamask, you should be able
               to deploy a new vault below (which is just a smart contract) and begin using it to
               store your passwords securely. Reading existing vault data is free, but any
               write operations (including deployment) to the blockchain will cost additional gas.
@@ -91,6 +99,7 @@ const Home = observer(({store}) => {
         <section className='section'>
           <div className='card'>
             <div className='card-content'>
+              {web3Warning}
               <form onSubmit={onSubmit}>
                 <div className='field'>
                   <label className='label'>Enter passphrase</label>
@@ -98,7 +107,7 @@ const Home = observer(({store}) => {
                     <input name='name'
                       onChange={onChange}
                       className='input'
-                      disabled={store.newVaultDialog.isDeploying}
+                      disabled={store.newVaultDialog.isDeploying || !store.web3Enabled}
                       type='password'
                       value={store.newVaultDialog.passphrase}
                       placeholder='Enter passphrase to encrypt your vault contents'
