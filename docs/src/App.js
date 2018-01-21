@@ -6,7 +6,6 @@ import { autorun } from 'mobx';
 import Home from './components/Home';
 import Vault from './components/Vault';
 import LockedVault from './components/LockedVault';
-import Nav from './components/Nav';
 
 import './App.css';
 
@@ -41,7 +40,6 @@ export function startRouter(store) {
 
 export const App = observer(({store}) => {
   return <div className='app container'>
-    <Nav store={store}/>
     {renderView(store)}
   </div>;
 });
