@@ -23,17 +23,17 @@ function renderView(store) {
 
 export function startRouter(store) {
   const router = new Router({
-    'vault/:address': (address) => store.showVault(address),
+    '/vault/:address': (address) => store.showVault(address),
     '/': () => store.showHome()
   });
 
-  router.configure({ html5history: true });
+  router.configure({ html5history: false });
   router.init();
 
   autorun(() => {
     const path = store.currentPath;
-    if (path !== window.location.pathName) {
-      window.history.pushState(null, null, path);
+    if (path !== window.location.hash) {
+      window.location.hash = path;
     }
   });
 }
